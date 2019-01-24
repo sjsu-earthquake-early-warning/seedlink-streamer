@@ -25,9 +25,9 @@ def main():
 
   # To simulate continuous fetching,
   for x in range(1):
-    st = fetcher.fetch_past(3000)
+    st = fetcher.fetch_past(3000, type="DART")
     data = list(map(lambda x: int(x), st[0].data.tolist()))
-    send_to_lambda(client, data)
+    (client, data)
 
   return
 

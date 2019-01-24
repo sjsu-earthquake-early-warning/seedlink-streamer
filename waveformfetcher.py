@@ -23,7 +23,7 @@ class WaveformFetcher:
 
     # Initialize the client.
     self.client = Client(provider)
-  def fetch_past(self, ms):
+  def fetch_past(self, ms, type="FDSN"):
     """
     Gets the waveform from the past 'ms' milliseconds to now.
     
@@ -36,5 +36,10 @@ class WaveformFetcher:
     """
     then = UTCDateTime(datetime.now() - timedelta(seconds=ms/1000))
     now = UTCDateTime(datetime.now())
-    st = self.client.get_waveforms(self.network, self.station, self.location, self.channel, then, now)
+
+    if type == "FDSN":
+        st = self.client.get_waveforms(self.network, self.station, self.location, self.channel, then, now)
+    if type == "DART":
+        # TODO: obspy.read()
+        st = [0, 1]
     return st
