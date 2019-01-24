@@ -40,6 +40,15 @@ class WaveformFetcher:
     if type == "FDSN":
         st = self.client.get_waveforms(self.network, self.station, self.location, self.channel, then, now)
     if type == "DART":
-        # TODO: obspy.read()
-        st = [0, 1]
+		today = UTCDateTime.now().utctimetuple()
+		yearAsString = str(today[0])
+		dayOfYearAsNum = "{0:0=3d}".format(today[7]) #formats day of year to 3 digits...
+		dayOfYearAsString = str(dayOfYearAsNum).zfill(3)
+		JSFB_url = "http://service.ncedc.org/DART/NC/JSFB.NC/EHZ..D/JSFB.NC.EHZ..D." + yearAsString + "." + dayOfYearAsString
+		
+		param_endtime = UTCDateTime().__sub__(14)
+		param_starttime = UTCDateTime().__sub__(17)
+        st = read(JSFB_url)
+		st.trim(param_starttime, param_endtime) #trims to 3 second waveforms between 14 to 17 seconds back in time
+
     return st
