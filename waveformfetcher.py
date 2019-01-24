@@ -25,32 +25,35 @@ class WaveformFetcher:
     self.client = Client(provider)
   def fetch_past(self, ms, type="FDSN"):
     """
-    Gets the waveform from the past 'ms' milliseconds to now.
+    Depending on type, gets the waveform from the past 'ms' milliseconds to now or the whole day.
     
     Parameters:
     ms (int): How far back in milliseconds the waveform should start.
+    type (str): "FDSN" | "DART" . "FDSN" uses the FDSN Web Service Specification and retrieves data from past ms while "DART" uses the NCEDC DART web url and retrieves daily data. 
 
     Returns:
     obspy.stream.Stream
 
     """
-    then = UTCDateTime(datetime.now() - timedelta(seconds=ms/1000))
-    now = UTCDateTime(datetime.now())
+    then = datetime.now() - timedelta(seconds=ms/1000)
+    now = datetime.now()
+    st = None
 
     if type == "FDSN":
       st = self.client.get_waveforms(self.network, self.station, self.location, self.channel, then, now)
+      how_long_it_took = datetime.now() - now
     if type == "DART":
-      today = UTCDateTime.now().utctimetuple()
-      yearAsString = str(today[0])
-      dayOfYearAsNum = "{0:0=3d}".format(today[7]) #formats day of year to 3 digits...
-      dayOfYearAsString = str(dayOfYearAsNum).zfill(3)
-      JSFB_url = "http://service.ncedc.org/DART/NC/JSFB.NC/EHZ..D/JSFB.NC.EHZ..D." + yearAsString + "." + dayOfYearAsString
+      if self.provider == "NCEDC":
+        # Get necessary information to construct the URL
+        year = now.year
+        day_of_year = str(now.timetuple().tm_yday).zfill(3)
 
-      # delta time defined below
-      param_endtime = UTCDateTime().__sub__(14)
-      param_starttime = UTCDateTime().__sub__(17)
+        # Construct the URL.
+        # Long, but we figured it out through inference.
+        url = f"http://service.ncedc.org/DART/{self.network}/{self.station}.{self.network}/{self.channel}..D/{self.station}.{self.network}.{self.channel}..D.{year}.{day_of_year}"
 
-      st = read(JSFB_url)
-      st.trim(param_starttime, param_endtime) #trims to 3 second waveforms between 14 to 17 seconds back in time
+        st = read(url)
+        how_long_it_took = datetime.now() - now
 
+    # print(f"Time from past ({type}) (h:mm:ss): {how_long_it_took}")
     return st

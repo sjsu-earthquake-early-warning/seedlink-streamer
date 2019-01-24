@@ -23,11 +23,17 @@ def main():
   client = boto3.client('lambda')
   fetcher = waveformfetcher.WaveformFetcher()
 
-  # To simulate continuous fetching,
-  for x in range(1):
+  # Let's compare the two kinds of fetching.
+  for x in range(10):
+    st = fetcher.fetch_past(3000, type="FDSN")
+  for x in range(10):
     st = fetcher.fetch_past(3000, type="DART")
-    data = list(map(lambda x: int(x), st[0].data.tolist()))
-    (client, data)
+
+  # To simulate continuous fetching,
+  # for x in range(10):
+    # st = fetcher.fetch_past(5000, type="FDSN")
+    # data = list(map(lambda x: int(x), st[0].data.tolist()))
+    # # send_to_lambda(client, data)
 
   return
 
