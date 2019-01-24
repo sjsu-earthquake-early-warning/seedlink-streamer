@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from obspy.clients.fdsn import Client
-from obspy import UTCDateTime
+from obspy import UTCDateTime, read
 
 class WaveformFetcher:
   def __init__(self, provider=None, network=None, station=None, location=None, channel=None):
@@ -38,17 +38,19 @@ class WaveformFetcher:
     now = UTCDateTime(datetime.now())
 
     if type == "FDSN":
-        st = self.client.get_waveforms(self.network, self.station, self.location, self.channel, then, now)
+      st = self.client.get_waveforms(self.network, self.station, self.location, self.channel, then, now)
     if type == "DART":
-		today = UTCDateTime.now().utctimetuple()
-		yearAsString = str(today[0])
-		dayOfYearAsNum = "{0:0=3d}".format(today[7]) #formats day of year to 3 digits...
-		dayOfYearAsString = str(dayOfYearAsNum).zfill(3)
-		JSFB_url = "http://service.ncedc.org/DART/NC/JSFB.NC/EHZ..D/JSFB.NC.EHZ..D." + yearAsString + "." + dayOfYearAsString
-		
-		param_endtime = UTCDateTime().__sub__(14)
-		param_starttime = UTCDateTime().__sub__(17)
-        st = read(JSFB_url)
-		st.trim(param_starttime, param_endtime) #trims to 3 second waveforms between 14 to 17 seconds back in time
+      today = UTCDateTime.now().utctimetuple()
+      yearAsString = str(today[0])
+      dayOfYearAsNum = "{0:0=3d}".format(today[7]) #formats day of year to 3 digits...
+      dayOfYearAsString = str(dayOfYearAsNum).zfill(3)
+      JSFB_url = "http://service.ncedc.org/DART/NC/JSFB.NC/EHZ..D/JSFB.NC.EHZ..D." + yearAsString + "." + dayOfYearAsString
+
+      # delta time defined below
+      param_endtime = UTCDateTime().__sub__(14)
+      param_starttime = UTCDateTime().__sub__(17)
+
+      st = read(JSFB_url)
+      st.trim(param_starttime, param_endtime) #trims to 3 second waveforms between 14 to 17 seconds back in time
 
     return st
