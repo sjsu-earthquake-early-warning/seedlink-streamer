@@ -31,7 +31,7 @@ class WaveformFetcher:
     ms (int): How far back in milliseconds the waveform should start.
 
     Returns:
-    obspy.stream.Stream
+    obspy.stream.Trace
 
     """
     then = UTCDateTime(datetime.now() - timedelta(seconds=ms/1000))
@@ -51,6 +51,15 @@ class WaveformFetcher:
       param_starttime = UTCDateTime().__sub__(17)
 
       st = read(JSFB_url)
-      st.trim(param_starttime, param_endtime) #trims to 3 second waveforms between 14 to 17 seconds back in time
+      #st.trim(param_starttime, param_endtime) #trims to 3 second waveforms between 14 to 17 seconds back in time
+      trace = st[0]
 
-    return st
+      # Creates a copy of the trace to filter
+      trace_filter = trace.copy()
+
+      #print(trace_filter) # plots trace before filter was applied
+      trace_filter.detrend('linear')
+      trace_filter.filter('bandpass', freqmin=1, freqmax=20, corners=4, zerophase=False) 
+      trace_filter.plot() # plots filtered trace
+
+    return trace_filter
