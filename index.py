@@ -2,6 +2,7 @@
 import waveformfetcher
 import boto3
 import json
+import time
 
 def send_to_lambda(client, data):
   # Format data
@@ -34,4 +35,7 @@ def main():
     send_to_lambda(client, data)
 
 if __name__ == '__main__':
-  main()
+  while True:
+     main()
+     time.sleep(3)
+
