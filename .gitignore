@@ -1,2 +1,9 @@
 __pycache__
 *.ipynb
+.idea/encodings.xml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/seedlink-streamer.iml
+.idea/vcs.xml
+.idea/workspace.xml
