@@ -47,11 +47,11 @@ class WaveformFetcher:
       JSFB_url = "http://service.ncedc.org/DART/NC/JSFB.NC/EHZ..D/JSFB.NC.EHZ..D." + yearAsString + "." + dayOfYearAsString
 
       # delta time defined below
-      # param_endtime = UTCDateTime().__sub__(14)
-      # param_starttime = UTCDateTime().__sub__(17)
+      param_endtime = UTCDateTime().__sub__(14)
+      param_starttime = UTCDateTime().__sub__(17)
 
       st = read(JSFB_url)
-      #st.trim(param_starttime, param_endtime) #trims to 3 second waveforms between 14 to 17 seconds back in time
+      st.trim(param_starttime, param_endtime) #trims to 3 second waveforms between 14 to 17 seconds back in time
       trace = st[0]
 
       # Creates a copy of the trace to filter
@@ -60,7 +60,6 @@ class WaveformFetcher:
       # print(trace_filter) # plots trace before filter was applied
       trace_filter.detrend('linear')
       trace_filter.filter('bandpass', freqmin=1, freqmax=20, corners=4, zerophase=False) 
-      trace_filter.plot() # plots filtered trace
-
+      #trace_filter.plot() # plots filtered trace
 
     return trace_filter

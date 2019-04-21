@@ -25,9 +25,9 @@ def main():
 
   # To simulate continuous fetching,
   for x in range(1):
-    st = fetcher.fetch_past(1, type="DART")
+    st = fetcher.fetch_past(3000, type="DART") # first parameter does nothing unless it's FDSN
     data = list(map(lambda x: int(x), st.data.tolist()))
-    ###datatest = "tester"
+
     # data = list(map(lambda x: int(x), st[0].data.tolist())) #removed this to fix: TypeError: 'float' object is not iterable
 
     # send data to lambda function
