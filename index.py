@@ -11,26 +11,27 @@ def send_to_lambda(client, data):
   payload = json.dumps(payload).encode('utf-8')
 
   response = client.invoke(
-    FunctionName='hello-world',
-    # InvocationType='RequestResponse',    # Invoke synchronously (just for dev purposes)
-    InvocationType='Event',              # Invoke asynchronously (we don't need to wait)
+    FunctionName='taiTest',
+    InvocationType='RequestResponse',    # Invoke synchronously (just for dev purposes)
+    # InvocationType='Event',              # Invoke asynchronously (we don't need to wait)
     Payload=payload
   )
-  # print(response['Payload'].read())
+  print(response['Payload'].read())
 
 def main():
-  # Initalize boto3, fetcher
+  # Initialize boto3, fetcher
   client = boto3.client('lambda')
   fetcher = waveformfetcher.WaveformFetcher()
 
   # To simulate continuous fetching,
   for x in range(1):
-    st = fetcher.fetch_past(3000, type="DART")
+    st = fetcher.fetch_past(1, type="DART")
     data = list(map(lambda x: int(x), st.data.tolist()))
-    #data = list(map(lambda x: int(x), st[0].data.tolist())) #removed this to fix: TypeError: 'float' object is not iterable
-    (client, data)
+    ###datatest = "tester"
+    # data = list(map(lambda x: int(x), st[0].data.tolist())) #removed this to fix: TypeError: 'float' object is not iterable
 
-  return
+    # send data to lambda function
+    send_to_lambda(client, data)
 
 if __name__ == '__main__':
   main()
