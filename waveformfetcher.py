@@ -51,15 +51,15 @@ class WaveformFetcher:
       param_starttime = UTCDateTime().__sub__(17)
 
       st = read(JSFB_url)
-      #st.trim(param_starttime, param_endtime) #trims to 3 second waveforms between 14 to 17 seconds back in time
+      st.trim(param_starttime, param_endtime) #trims to 3 second waveforms between 14 to 17 seconds back in time
       trace = st[0]
 
       # Creates a copy of the trace to filter
       trace_filter = trace.copy()
 
-      #print(trace_filter) # plots trace before filter was applied
+      # print(trace_filter) # plots trace before filter was applied
       trace_filter.detrend('linear')
       trace_filter.filter('bandpass', freqmin=1, freqmax=20, corners=4, zerophase=False) 
-      trace_filter.plot() # plots filtered trace
+      #trace_filter.plot() # plots filtered trace
 
     return trace_filter
